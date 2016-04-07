@@ -24,10 +24,10 @@ In _polls/views.py_
         
 5. Create the app's url list
 
-        & touch _polls/url.py_
+        & touch polls/urls.py
 
-6. Add index to app url list  
-In _polls/url.py_
+6. Add index to app's urls file  
+In _polls/urls.py_
 
         from django.conf.urls import url
         from . import views
