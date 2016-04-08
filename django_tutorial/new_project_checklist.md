@@ -225,7 +225,10 @@ Modify _polls/template/polls/detail.html_ to include <form> element:
 2. Add form processing code to the associated view
 Modify _vote()_ inside _polls/views.py_ with this:
 
-        def vote(request, question_id):
+        from django.shortcuts import get_object_or_404, render
+	from django.http import HttpResponseRedirect, HttpResponse
+	from django.core.urlresolvers import reverse
+	def vote(request, question_id):
             question = get_object_or_404(Question, pk=question_id)
             try:
                 selected_choice = question.choice_set.get(pk=request.POST['choice'])
