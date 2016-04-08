@@ -24,10 +24,10 @@ In _polls/views.py_
         
 5. Create the app's url list
 
-        & touch _polls/url.py_
+        & touch polls/urls.py
 
-6. Add index to app url list  
-In _polls/url.py_
+6. Add index to app's urls file  
+In _polls/urls.py_
 
         from django.conf.urls import url
         from . import views
@@ -36,13 +36,26 @@ In _polls/url.py_
         ]
         
 7. Add app to main url list
-in _mysite/url.py_
+in _mysite/urls.py_
 
         from django.conf.urls import include, url
         from django.contrib import admin
         urlpatterns = [
             url(r'^polls/', include('polls.urls')),
             url(r'^admin/', admin.site.urls),
+        ]
+            
+8. Add app to main settings (assuming new app)  
+Add app to INSTALLED\_APPS section in _mysite/settings.py_
+
+        INSTALLED_APPS = [
+            'polls.apps.PollsConfig',
+            'django.contrib.admin',
+            'django.contrib.auth',
+            'django.contrib.contenttypes',
+            'django.contrib.sessions',
+            'django.contrib.messages',
+            'django.contrib.staticfiles',
         ]
         
 
@@ -74,25 +87,12 @@ Add model classes to _polls/models.py_
             votes = models.IntegerField(default=0)
             def __str__(self):
                 return self.choice_text
-            
-2. Add models to main settings (assuming new app)  
-Add app to INSTALLED_APPS section in _mysite/settings.py_
-
-        INSTALLED_APPS = [
-            'polls.apps.PollsConfig',
-            'django.contrib.admin',
-            'django.contrib.auth',
-            'django.contrib.contenttypes',
-            'django.contrib.sessions',
-            'django.contrib.messages',
-            'django.contrib.staticfiles',
-        ]
         
-3. Activate these models i.e. make migrations  
+2. Activate these models i.e. make migrations  
 
         $ python manage.py makemigrations polls
         
-4. Migrate
+3. Migrate
 
         $ python manage.py migrate
         
@@ -141,7 +141,7 @@ In _polls/views.py_ import the Question model then modify index():
 Customizing Templates
 ---------------------
 1. Define template namespace for the app  
-Add the app_name variable to _polls/url.py_:  
+Add the app\_name variable to _polls/urls.py_:  
 **This way it's possible to have app1/abc.html as well as app2/abc.html**
 
 		app_name = 'polls'
@@ -159,7 +159,7 @@ Add the app_name variable to _polls/url.py_:
 
 3. Create .html files inside this directory  
 Create a _polls/templates/polls/index.html_ and put this inside there:  
-**Use {% url %} template tag to automatically looks up 'detail' url from polls/url.py, so if you change url you don't have to change each template**
+**Use {% url %} template tag to automatically looks up 'detail' url from polls/urls.py, so if you change url you don't have to change each template**
 
 		{% if latest_question_list %}
 			<ul>
@@ -225,6 +225,9 @@ Modify _polls/template/polls/detail.html_ to include <form> element:
 2. Add form processing code to the associated view
 Modify _vote()_ inside _polls/views.py_ with this:
 
+        from django.shortcuts import get_object_or_404, render
+    	from django.http import HttpResponseRedirect, HttpResponse
+    	from django.core.urlresolvers import reverse
         def vote(request, question_id):
             question = get_object_or_404(Question, pk=question_id)
             try:
