@@ -181,7 +181,7 @@ Modify _polls/views.py_ to render using the new template:
 			context = {'latest_question_list': latest_question_list}
 			return render(request, 'polls/index.html', context)
 
-		# Without render() shortcut (same as above)
+		# The hard way
 		from django.template import loader
 		def index(request):
 			latest_question_list = Question.objects.order_by('-pub_date')[:5]
@@ -191,20 +191,20 @@ Modify _polls/views.py_ to render using the new template:
 
 5. Redirect to 404 (optional)
 Modify _polls/views.py_ to catch _Model.DoesNotExist_ exception and redirect to a 404:
+			
+		# With get_object_or_404() shortcut
+		from django.shortcuts import get_object_or_404, render
+		def detail(request, question_id):
+			question = get_object_or_404(Question, pk=question_id)
+			return render(request, 'polls/detail.html', {'question':question})
 
-		# Long version
+		# The hard way
 		from django.http import Http404
 		def detail(request, question_id):
 			try:
 				question = Question.objects.get(pk=question_id)
 			except Question.DoesNotExist:
 				raise Http404("Question Does Not Exist")
-			return render(request, 'polls/detail.html', {'question':question})
-			
-		# With get_object_or_404() shortcut
-		from django.shortcuts import get_object_or_404, render
-		def detail(request, question_id):
-			question = get_object_or_404(Question, pk=question_id)
 			return render(request, 'polls/detail.html', {'question':question})
 		
 	
